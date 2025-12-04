@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Platsökare</title>
+    <title>Location Finder</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         body {
@@ -18,10 +18,10 @@
     </style>
 </head>
 <body>
-    <h1>Platsökare</h1>
-    <p>Skriv in en ort för att hitta dess koordinater:</p>
-    <input type="text" id="ort" placeholder="Skriv en ort här" value="Sevastopol">
-    <button onclick="findLocation()">Sök</button>
+    <h1>Location Finder</h1>
+    <p>Enter a location to find its coordinates:</p>
+    <input type="text" id="ort" placeholder="Enter a location here" value="Sevastopol">
+    <button onclick="findLocation()">Search</button>
     <p id="resultat"></p>
     <div id="map"></div>
 
@@ -30,8 +30,8 @@
         let map;
 
         function findLocation() {
-            const ort = document.getElementById('ort').value;
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ort)}`)
+            const locationName = document.getElementById('ort').value;
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName)}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.length > 0) {
@@ -41,7 +41,7 @@
                         const longitude = location.lon;
 
                         document.getElementById('resultat').innerHTML =
-                            `${ort} är i ${displayName}. Koordinater för ${ort} är ${latitude}, ${longitude}.`;
+                            `${locationName} is in ${displayName}. Coordinates for ${locationName} are ${latitude}, ${longitude}.`;
 
                         if (!map) {
                             map = L.map('map').setView([latitude, longitude], 12);
@@ -53,17 +53,17 @@
                         }
 
                         L.marker([latitude, longitude]).addTo(map)
-                            .bindPopup(`${ort}<br>Lat: ${latitude}<br>Lon: ${longitude}`)
+                            .bindPopup(`${locationName}<br>Lat: ${latitude}<br>Lon: ${longitude}`)
                             .openPopup();
                     } else {
                         document.getElementById('resultat').innerHTML =
-                            `Kunde inte hitta koordinater för ${ort}.`;
+                            `Could not find coordinates for ${locationName}.`;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     document.getElementById('resultat').innerHTML =
-                        `Ett fel uppstod vid sökning efter ${ort}.`;
+                        `An error occurred while searching for ${locationName}.`;
                 });
         }
     </script>
